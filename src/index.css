@@ -1,7 +1,5 @@
 body {
-  font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", "Roboto", "Oxygen",
-    "Ubuntu", "Cantarell", "Fira Sans", "Droid Sans", "Helvetica Neue",
-    sans-serif;
+  font-family: system-ui;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
   background-color: #141414;
@@ -14,11 +12,12 @@ body,
   padding: 0;
   margin: 0;
 }
-
-code {
-  font-family: "SF Mono", source-code-pro, Menlo, Monaco, Consolas,
-    "Courier New", monospace;
+#root {
+  display: flex;
+  justify-content: center;
+  align-items: center;
 }
+
 ul {
   display: grid;
   gap: 1rem;
@@ -37,13 +36,14 @@ button {
 button:hover {
   opacity: 1;
   transform: translateY(-0.2rem) scale(1.025);
-  box-shadow: 0 0.5rem 1rem rgba(0, 0, 0, 0.25);
+  box-shadow: 3px 3px 2px rgba(0, 0, 0, 0.06), 12px 12px 8px rgba(0, 0, 0, 0.1),
+    48px 48px 32px rgba(0, 0, 0, 0.15);
 }
-button > figure {
+button {
   margin: 0;
   aspect-ratio: 38 / 50;
 }
-figure > img {
+img {
   width: 100%;
   height: 100%;
   display: block;

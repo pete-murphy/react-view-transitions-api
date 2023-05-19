@@ -29,33 +29,6 @@ export default function App() {
     </Routes>
   );
 }
-
-function Movie() {
-  const { movieId } = useParams();
-  const movie = movies.find((movie) => movie.id === movieId)!;
-  return (
-    <div
-      style={{
-        height: "100%",
-        display: "flex",
-        justifyContent: "center",
-        alignItems: "center",
-      }}
-    >
-      <figure>
-        <img
-          style={{
-            // @ts-ignore
-            viewTransitionName: "image-test",
-          }}
-          src={movie.thumbnailURL.full}
-          alt={movie.title}
-        />
-      </figure>
-    </div>
-  );
-}
-
 function Movies() {
   const navigate_ = useNavigate();
   const navigate =
@@ -65,7 +38,7 @@ function Movies() {
         return navigate_(nextRoute);
       } else {
         // @ts-ignore
-        event.currentTarget.firstElementChild.firstElementChild.style.viewTransitionName =
+        event.currentTarget.firstElementChild.style.viewTransitionName =
           "image-test";
         return document.startViewTransition(() => {
           // return navigate_(nextRoute);
@@ -75,19 +48,32 @@ function Movies() {
     };
 
   return (
-    <div style={{}}>
-      <ul>
-        {movies.map((movie) => (
-          <li key={movie.id}>
-            <button onClick={navigate(`/movie/${movie.id}`)}>
-              <figure>
-                <img src={movie.thumbnailURL.full} alt={movie.title} />
-              </figure>
-            </button>
-          </li>
-        ))}
-      </ul>
-    </div>
+    <ul>
+      {movies.map((movie) => (
+        <li key={movie.id}>
+          <button onClick={navigate(`/movie/${movie.id}`)}>
+            <img src={movie.thumbnailURL.full} alt={movie.title} />
+          </button>
+        </li>
+      ))}
+    </ul>
+  );
+}
+
+function Movie() {
+  const { movieId } = useParams();
+  const movie = movies.find((movie) => movie.id === movieId)!;
+  return (
+    <figure>
+      <img
+        style={{
+          // @ts-ignore
+          viewTransitionName: "image-test",
+        }}
+        src={movie.thumbnailURL.full}
+        alt={movie.title}
+      />
+    </figure>
   );
 }
 
