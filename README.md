@@ -1,4 +1,2 @@
 
-
-https://github.com/ptrfrncsmrph/react-view-transitions-api/assets/26548438/378c0e3a-9076-45a3-b8f3-7280e925b126
-
+![](https://github.com/ptrfrncsmrph/react-view-transitions-api/assets/26548438/ac3b1eb0-b2af-49ca-a315-79346f8cb7ab)
