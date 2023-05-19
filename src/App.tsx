@@ -29,6 +29,7 @@ export default function App() {
     </Routes>
   );
 }
+
 function Movies() {
   const navigate_ = useNavigate();
   const navigate =
