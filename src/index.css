@@ -1,0 +1,75 @@
+body {
+  font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", "Roboto", "Oxygen",
+    "Ubuntu", "Cantarell", "Fira Sans", "Droid Sans", "Helvetica Neue",
+    sans-serif;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+  background-color: #141414;
+}
+
+html,
+body,
+#root {
+  height: 100%;
+  padding: 0;
+  margin: 0;
+}
+
+code {
+  font-family: "SF Mono", source-code-pro, Menlo, Monaco, Consolas,
+    "Courier New", monospace;
+}
+ul {
+  display: grid;
+  gap: 1rem;
+  grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+  list-style: none;
+  padding: 1rem;
+}
+button {
+  padding: 0;
+  border: none;
+  display: block;
+  background: none;
+  opacity: 0.75;
+  transition: 200ms;
+}
+button:hover {
+  opacity: 1;
+  transform: translateY(-0.2rem) scale(1.025);
+  box-shadow: 0 0.5rem 1rem rgba(0, 0, 0, 0.25);
+}
+button > figure {
+  margin: 0;
+  aspect-ratio: 38 / 50;
+}
+figure > img {
+  width: 100%;
+  height: 100%;
+  display: block;
+  object-fit: cover;
+  object-position: 0;
+  border-radius: 0.5rem;
+  overflow: hidden;
+}
+
+::view-transition,
+::view-transition-image-pair(*),
+::view-transition-group(*) {
+  animation-duration: 1200ms;
+}
+
+::view-transition-old(image-test),
+::view-transition-new(image-test) {
+  height: 100%;
+  animation: none;
+  overflow: clip;
+  mix-blend-mode: normal;
+  object-position: 0;
+}
+::view-transition-old(image-test) {
+  object-fit: contain;
+}
+::view-transition-new(image-test) {
+  object-fit: cover;
+}
