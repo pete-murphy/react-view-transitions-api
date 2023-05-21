@@ -8,9 +8,9 @@ import {
   To,
   useParams,
 } from "react-router-dom";
-import movies_ from "./movies.json";
+import _movies from "./movies.json";
 
-const movies = movies_
+const movies = _movies
   .map((movie) => ({
     ...movie,
     thumbnailURL: {
@@ -19,6 +19,7 @@ const movies = movies_
     },
   }))
   .sort((a, b) => a.title.localeCompare(b.title));
+type Movie = (typeof movies)[number];
 
 export default function App() {
   return (
@@ -42,26 +43,12 @@ function Movies() {
   );
 }
 
-function MovieItem({ movie }: { movie: (typeof movies)[number] }) {
-  const ref = React.useRef<HTMLImageElement>(null);
-
-  const navigate = useNavigate();
-
-  const navigateWithViewTransition = (nextRoute: To) => {
-    if (document.startViewTransition && ref.current) {
-      ref.current.style.viewTransitionName = "movie-image";
-      document.startViewTransition(() => {
-        ReactDOM.flushSync(() => {
-          navigate(nextRoute);
-        });
-      });
-    } else {
-      navigate(nextRoute);
-    }
-  };
+function MovieItem({ movie }: { movie: Movie }) {
+  const [navigate, ref] =
+    useNavigateWithViewTransition<HTMLImageElement>("movie-image");
 
   return (
-    <button onClick={() => navigateWithViewTransition(`/movie/${movie.id}`)}>
+    <button onClick={() => navigate(`/movie/${movie.id}`)}>
       <img ref={ref} src={movie.thumbnailURL.large} alt={movie.title} />
     </button>
   );
@@ -70,6 +57,7 @@ function MovieItem({ movie }: { movie: (typeof movies)[number] }) {
 function Movie() {
   const { movieId } = useParams();
   const movie = movies.find((movie) => movie.id === movieId)!;
+
   return (
     <figure>
       <img
@@ -90,4 +78,30 @@ function NoMatch() {
       </p>
     </div>
   );
+}
+
+function useNavigateWithViewTransition<T extends HTMLElement = HTMLElement>(
+  viewTransitionName: string
+) {
+  const ref = React.useRef<T>(null);
+
+  const navigate = useNavigate();
+  const navigateWithViewTransition = React.useCallback(
+    (nextRoute: To) => {
+      if (document.startViewTransition && ref.current) {
+        ref.current.style.viewTransitionName = viewTransitionName;
+
+        document.startViewTransition(() => {
+          ReactDOM.flushSync(() => {
+            navigate(nextRoute);
+          });
+        });
+      } else {
+        navigate(nextRoute);
+      }
+    },
+    [navigate]
+  );
+
+  return [navigateWithViewTransition, ref] as const;
 }
