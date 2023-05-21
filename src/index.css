@@ -65,6 +65,19 @@ img {
   transition: ease-out;
 }
 
+::view-transition-new(*):only-child {
+  opacity: 0;
+  transition: 200ms;
+  z-index: -1;
+}
+::view-transition-old(*):only-child {
+  /* transition: none; */
+  opacity: 0;
+  transition: 200ms;
+  z-index: -1;
+  /* outline: 2px dashed red; */
+}
+
 /* ::view-transition-old(movie-image),
 ::view-transition-new(movie-image) {
   height: 100%;

@@ -25,7 +25,7 @@ export default function App() {
   React.useEffect(() => {
     const style = document.createElement("style");
     for (const movie of movies) {
-      const transitionId = `movie-image-${movie.id})`;
+      const transitionId = `movie-image-${movie.id}`;
       style.innerHTML += `
         ::view-transition-old(${transitionId}),
         ::view-transition-new(${transitionId}) {
