@@ -61,11 +61,12 @@ img {
 ::view-transition,
 ::view-transition-image-pair(*),
 ::view-transition-group(*) {
-  animation-duration: 1200ms;
+  animation-duration: 400ms;
+  transition: ease-out;
 }
 
-::view-transition-old(image-test),
-::view-transition-new(image-test) {
+::view-transition-old(movie-image),
+::view-transition-new(movie-image) {
   height: 100%;
   animation: none;
   overflow: clip;
@@ -73,10 +74,10 @@ img {
   object-position: 0;
 }
 
-::view-transition-old(image-test) {
+::view-transition-old(movie-image) {
   object-fit: contain;
 }
 
-::view-transition-new(image-test) {
+::view-transition-new(movie-image) {
   object-fit: cover;
 }

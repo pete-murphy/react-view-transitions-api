@@ -14,7 +14,7 @@ const movies = movies_
   .map((movie) => ({
     ...movie,
     thumbnailURL: {
-      full: `${movie.thumbnailURL}?auto=format%2Ccompress&q=100&h=${600}`,
+      large: `${movie.thumbnailURL}?auto=format%2Ccompress&q=100&h=${600}`,
       small: `${movie.thumbnailURL}?auto=format%2Ccompress&q=100&h=${160}`,
     },
   }))
@@ -31,33 +31,39 @@ export default function App() {
 }
 
 function Movies() {
-  const navigate_ = useNavigate();
-  const navigate =
-    (nextRoute: To): React.MouseEventHandler<HTMLButtonElement> =>
-    (event) => {
-      if (!document.startViewTransition) {
-        return navigate_(nextRoute);
-      } else {
-        // @ts-ignore
-        event.currentTarget.firstElementChild.style.viewTransitionName =
-          "image-test";
-        return document.startViewTransition(() => {
-          // return navigate_(nextRoute);
-          return ReactDOM.flushSync(() => navigate_(nextRoute));
-        });
-      }
-    };
-
   return (
     <ul>
       {movies.map((movie) => (
         <li key={movie.id}>
-          <button onClick={navigate(`/movie/${movie.id}`)}>
-            <img src={movie.thumbnailURL.full} alt={movie.title} />
-          </button>
+          <MovieItem movie={movie} />
         </li>
       ))}
     </ul>
+  );
+}
+
+function MovieItem({ movie }: { movie: (typeof movies)[number] }) {
+  const ref = React.useRef<HTMLImageElement>(null);
+
+  const navigate = useNavigate();
+
+  const navigateWithViewTransition = (nextRoute: To) => {
+    if (document.startViewTransition && ref.current) {
+      ref.current.style.viewTransitionName = "movie-image";
+      document.startViewTransition(() => {
+        ReactDOM.flushSync(() => {
+          navigate(nextRoute);
+        });
+      });
+    } else {
+      navigate(nextRoute);
+    }
+  };
+
+  return (
+    <button onClick={() => navigateWithViewTransition(`/movie/${movie.id}`)}>
+      <img ref={ref} src={movie.thumbnailURL.large} alt={movie.title} />
+    </button>
   );
 }
 
@@ -67,11 +73,8 @@ function Movie() {
   return (
     <figure>
       <img
-        style={{
-          // @ts-ignore
-          viewTransitionName: "image-test",
-        }}
-        src={movie.thumbnailURL.full}
+        style={{ viewTransitionName: "movie-image" }}
+        src={movie.thumbnailURL.large}
         alt={movie.title}
       />
     </figure>
