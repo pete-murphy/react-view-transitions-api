@@ -9,11 +9,11 @@ interface Document {
 }
 
 interface CSSStyleDeclaration {
-  viewTransitionName: string;
+  viewTransitionName?: string;
 }
 
 declare module "csstype" {
   interface Properties {
-    viewTransitionName: string;
+    viewTransitionName?: string;
   }
 }
