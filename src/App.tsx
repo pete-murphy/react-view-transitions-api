@@ -1,11 +1,9 @@
 import * as React from "react";
 import * as ReactDOM from "react-dom";
 import {
-  Routes,
-  Route,
-  Link,
-  useNavigate,
+  ScrollRestoration,
   To,
+  useNavigate,
   useParams,
 } from "react-router-dom";
 import _movies from "./movies.json";
@@ -21,25 +19,18 @@ const movies = _movies
   .sort((a, b) => a.title.localeCompare(b.title));
 type Movie = (typeof movies)[number];
 
-export default function App() {
+export function Movies() {
   return (
-    <Routes>
-      <Route index element={<Movies />} />
-      <Route path="movie/:movieId" element={<Movie />} />
-      <Route path="*" element={<NoMatch />} />
-    </Routes>
-  );
-}
-
-function Movies() {
-  return (
-    <ul>
-      {movies.map((movie) => (
-        <li key={movie.id}>
-          <MovieItem movie={movie} />
-        </li>
-      ))}
-    </ul>
+    <>
+      <ul>
+        {movies.map((movie) => (
+          <li key={movie.id}>
+            <MovieItem movie={movie} />
+          </li>
+        ))}
+        <ScrollRestoration />
+      </ul>
+    </>
   );
 }
 
@@ -60,10 +51,10 @@ function MovieItem({ movie }: { movie: Movie }) {
   );
 }
 
-function Movie() {
+export function Movie() {
   const { movieId } = useParams();
   const movie = movies.find((movie) => movie.id === movieId)!;
-  const [navigate] = useNavigateWithViewTransition<HTMLElement>({
+  const [navigate] = useNavigateWithViewTransition({
     selector: `[data-id="${movieId}"]`,
     viewTransitionName: "movie-image",
   });
@@ -82,59 +73,53 @@ function Movie() {
   );
 }
 
-function NoMatch() {
-  return (
-    <div>
-      <h2>Nothing to see here!</h2>
-      <p>
-        <Link to="/">Go to the home page</Link>
-      </p>
-    </div>
-  );
-}
-
 function useNavigateWithViewTransition<T extends HTMLElement = HTMLElement>(
   params: { viewTransitionName?: string; selector?: string } = {}
 ) {
   const ref = React.useRef<T>(null);
 
-  const navigate = useNavigate();
-  const navigateWithViewTransition = React.useCallback(
-    async (nextRoute: string) => {
+  const navigate = useNavigate() as (to: -1 | string) => void;
+
+  const navigateWithViewTransition = React.useCallback<typeof navigate>(
+    async (nextRoute) => {
+      if (!document.startViewTransition) return navigate(nextRoute);
+
       const isBackNavigation = nextRoute === "/";
+
       if (isBackNavigation) {
         document.documentElement.classList.add("back-navigation");
       }
-      if (document.startViewTransition) {
-        let element: Element | null = null;
-        if (ref.current) {
-          ref.current.style.viewTransitionName =
-            params.viewTransitionName ?? "";
-        }
+      let element: Element | null = null;
+      if (ref.current) {
+        ref.current.style.viewTransitionName = params.viewTransitionName ?? "";
+      }
 
-        const transition = document.startViewTransition(() => {
-          ReactDOM.flushSync(() => {
-            navigate(nextRoute);
-          });
-          if (isBackNavigation && params.selector) {
-            element = document.querySelector(params.selector);
-            if (element) {
-              (element as HTMLElement).style.viewTransitionName =
-                params.viewTransitionName ?? "";
-            }
-          }
+      const transition = document.startViewTransition(async () => {
+        // @NOTE: We could prefetch the next route's data here
+        // const movie = movies.find(
+        //   (movie) => movie.id === nextRoute.split("/").at(-1)
+        // )!;
+        // await fetch(movie.thumbnailURL.large);
+
+        ReactDOM.flushSync(() => {
+          navigate(nextRoute);
         });
-
-        try {
-          await transition.finished;
-        } finally {
-          document.documentElement.classList.remove("back-navigation");
+        if (isBackNavigation && params.selector) {
+          element = document.querySelector(params.selector);
           if (element) {
-            (element as HTMLElement).style.viewTransitionName = "";
+            (element as HTMLElement).style.viewTransitionName =
+              params.viewTransitionName ?? "";
           }
         }
-      } else {
-        navigate(nextRoute);
+      });
+
+      try {
+        await transition.finished;
+      } finally {
+        document.documentElement.classList.remove("back-navigation");
+        if (element) {
+          (element as HTMLElement).style.viewTransitionName = "";
+        }
       }
     },
     [navigate]
